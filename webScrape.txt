@@ -1,0 +1,40 @@
+import urllib.request
+from bs4 import BeautifulSoup
+import re
+
+# Twitter timeline for a particular account
+
+url = "https://twitter.com/BarackObama?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor"
+webpage = urllib.request.urlopen(url)
+
+soup = BeautifulSoup(webpage,"html.parser")
+print(soup.title.text)
+
+regex = 'http.*'
+pattern = re.compile(regex)
+
+# find and print all the links on the webpage
+for link in soup.findAll('a'):
+    hrefs = link.get('href')
+    valid_links = re.findall(pattern, str(hrefs))
+    if valid_links!=[]:
+        print(valid_links)
+
+
+#find and print the tweets on the webpage
+i=1
+for tweet in soup.findAll("div",{"class":"content"}):
+    print('\n' + "TWEET NUMBER - " + str(i))
+    print(tweet.find('p').text)
+    i+=1
+
+#print the Details of the account holder
+print("Details:")
+print(soup.find("div",{"class" : "ProfileHeaderCard-location"}).text)
+print(soup.find("div",{"class" : "ProfileHeaderCard-birthdate"}).text)
+print(soup.find("div",{"class" : "ProfileHeaderCard-url"}).text)
+print(soup.find("div",{"class" : "ProfileHeaderCard-joinDate"}).text)
+
+for p in soup.findAll("div",{"class" : "PhotoRail-heading"}):
+    print(soup.find("a", {"class": "PhotoRail-headingWithCount js-nav"}).text)
+
